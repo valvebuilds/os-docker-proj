@@ -46,7 +46,7 @@ function Register() {
     e.preventDefault()
 
     if (password !== password2) {
-      toast.error('Passwords do not match')
+      toast.error('Contraseñas no coinciden')
     } else {
       const userData = {
         name,
@@ -66,9 +66,9 @@ function Register() {
     <>
       <section className='heading'>
         <h1>
-          <FaUser /> Register
+          <FaUser /> Registro
         </h1>
-        <p>Please create an account</p>
+        <p>Por favor crea una cuenta</p>
       </section>
 
       <section className='form'>
@@ -80,7 +80,7 @@ function Register() {
               id='name'
               name='name'
               value={name}
-              placeholder='Enter your name'
+              placeholder='Ingresa tu nombre'
               onChange={onChange}
             />
           </div>
@@ -91,7 +91,7 @@ function Register() {
               id='email'
               name='email'
               value={email}
-              placeholder='Enter your email'
+              placeholder='Ingresa tu email'
               onChange={onChange}
             />
           </div>
@@ -102,7 +102,7 @@ function Register() {
               id='password'
               name='password'
               value={password}
-              placeholder='Enter password'
+              placeholder='Ingresa contraseña'
               onChange={onChange}
             />
           </div>
@@ -113,13 +113,13 @@ function Register() {
               id='password2'
               name='password2'
               value={password2}
-              placeholder='Confirm password'
+              placeholder='Confirma contraseña'
               onChange={onChange}
             />
           </div>
           <div className='form-group'>
             <button type='submit' className='btn btn-block'>
-              Submit
+              Enviar
             </button>
           </div>
         </form>

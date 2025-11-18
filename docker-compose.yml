@@ -1,0 +1,72 @@
+# docker-compose.yml
+
+services:
+  # 1. FRONTEND: Interfaz de Usuario
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        REACT_APP_API_URL: "http://localhost:5001"
+    container_name: app-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:5001
+    depends_on:
+      - backend
+    extra_hosts:
+      - "backend:host-gateway"
+
+
+  # 2. BACKEND (API): Lógica del Servidor
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile 
+    container_name: app-backend
+    ports:
+      - "5001:5001" # Mapea puerto 
+    environment:
+      # CRÍTICO: La API se conecta al Replica Set completo (rs0)
+      MONGO_URI: "mongodb://db-primary:27017,db-replica:27017/?replicaSet=rs0"
+      PORT: 5001
+      JWT_SECRET: abc123
+      NODE_ENV: development
+      # Tu código de Backend debe usar esta URI y configurar 'readPreference: secondary'
+    depends_on:
+      - rs-init # Espera a que el Replica Set esté configurado
+
+  # 3. DB PRIMARIA (Escritura)
+  db-primary:
+    image: mongo:latest
+    container_name: db-primary
+    command: ["--replSet", "rs0", "--bind_ip_all"] # Indica que es parte del Replica Set 'rs0'
+    volumes:
+      - mongo_primary_data:/data/db # Persistencia de datos
+    # Exponemos el puerto solo para conveniencia en desarrollo (ej. Mongo Compass)
+    ports:
+      - "27017:27017" 
+
+  # 4. DB RÉPLICA (Lectura)
+  db-replica:
+    image: mongo:latest
+    container_name: db-replica
+    command: ["--replSet", "rs0", "--bind_ip_all"] # Indica que es parte del Replica Set 'rs0'
+    volumes:
+      - mongo_replica_data:/data/db # Persistencia de datos
+
+  # 5. RS-INIT: Servicio de Inicialización del Replica Set
+  rs-init:
+    image: mongo:latest
+    container_name: rs-init
+    volumes:
+      - ./mongo-init/rs-init.sh:/scripts/rs-init.sh # Monta el script
+    entrypoint: ["bash", "/scripts/rs-init.sh"]    # Ejecuta el script
+    depends_on:
+      - db-primary
+      - db-replica
+    # Este contenedor finalizará automáticamente después de ejecutar el script
+
+volumes:
+  mongo_primary_data:
+  mongo_replica_data:

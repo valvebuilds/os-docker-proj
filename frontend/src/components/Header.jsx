@@ -35,7 +35,7 @@ function Header() {
             </li>
             <li>
               <Link to='/register'>
-                <FaUser /> Register
+                <FaUser /> Registro
               </Link>
             </li>
           </>
