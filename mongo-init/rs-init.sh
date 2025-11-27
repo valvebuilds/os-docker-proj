@@ -13,10 +13,13 @@ rs.initiate(
     _id : "rs0",
     members: [
       { _id: 0, host: "db-primary:27017", priority: 10 }, 
-      { _id: 1, host: "db-replica:27017", priority: 1 }   
+      { _id: 1, host: "db-replica:27017", priority: 1 },
+      { _id: 2, host: "db-arbiter:27017", arbiterOnly: true }   
     ]
   }
 )
 EOF
+
+sleep 5
 
 echo "Replica Set inicializado exitosamente."

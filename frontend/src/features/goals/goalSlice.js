@@ -53,7 +53,8 @@ export const deleteGoal = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token
-      return await goalService.deleteGoal(id, token)
+      await goalService.deleteGoal(id, token)
+      return {id}
     } catch (error) {
       const message =
         (error.response &&
@@ -93,6 +94,7 @@ export const goalSlice = createSlice({
         state.isLoading = true
       })
       .addCase(getGoals.fulfilled, (state, action) => {
+        console.log("get goals REDUCER HIT", action.payload)
         state.isLoading = false
         state.isSuccess = true
         state.goals = action.payload
@@ -106,6 +108,7 @@ export const goalSlice = createSlice({
         state.isLoading = true
       })
       .addCase(deleteGoal.fulfilled, (state, action) => {
+        console.log("DELETE REDUCER HIT", action.payload)
         state.isLoading = false
         state.isSuccess = true
         state.goals = state.goals.filter(
